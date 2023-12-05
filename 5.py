@@ -354,7 +354,7 @@ def process_range_through_tree(source_range, tree_index):
         r_e = r['end']
         r_dest = r['dest']
         if s_s >= r_s and s_e <= r_e:
-            # one mapped
+            # fully mapped
             offset = s_s - r_s
             len1 = s_e - s_s
             dest_start = r_dest + offset
@@ -365,7 +365,7 @@ def process_range_through_tree(source_range, tree_index):
             process_range_through_tree(mapped_range, tree_index + 1)
 
         elif s_s < r_s and s_e > r_e:
-            # one mapped, two unmapped
+            # middle mapped, two unmapped
             len1 = r_e - r_s
             mapped_range = {'start': r_dest, 'end': r_dest + len1}
 
@@ -380,7 +380,7 @@ def process_range_through_tree(source_range, tree_index):
             process_range_through_tree(mapped_range, tree_index + 1)
 
         elif s_s < r_s < s_e:
-            # one mapped, one unmapped
+            # right mapped, left unmapped
             len1 = s_e - r_s
             mapped_range = {'start': r_dest, 'end': r_dest + len1}
 
@@ -392,7 +392,7 @@ def process_range_through_tree(source_range, tree_index):
             process_range_through_tree(mapped_range, tree_index + 1)
 
         elif s_s < r_e < s_e:
-            # one mapped, one unmapped
+            # left mapped, right unmapped
             offset = s_s - r_s
             len1 = r_e - s_s
             dest_start = r_dest + offset
