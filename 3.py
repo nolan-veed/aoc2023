@@ -268,4 +268,5 @@ for bottom_line in s.split('\n'):
     top_line = middle_line
     middle_line = bottom_line
 
-print(total)
+# print(total)  # 539433
+print(total)  # 75847567

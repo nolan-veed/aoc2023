@@ -35,7 +35,8 @@ Distance:   499   2210   1097   1440
 # prod = num_ways[0]
 # for i in range(1, len(num_ways)):
 #     prod = prod * num_ways[i]
-# print(prod)
+#
+# print(prod)  # 1710720
 
 t = None
 d = None
@@ -49,7 +50,6 @@ for line in s.splitlines():
         d = ''.join(items[1:])
         d = int(d)
 
-
 count = 0
 for press_t in range(1, t):
     t_left = t - press_t
@@ -57,4 +57,4 @@ for press_t in range(1, t):
     if finish_d > d:
         count = count + 1
 
-print(count)
+print(count)  # 35349468

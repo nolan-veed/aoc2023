@@ -273,8 +273,7 @@ humidity-to-location map:
 #         map_dest[i] = map_source[i]
 #
 # lowest = min(map_dest)
-# print(lowest)
-
+# print(lowest)  # 251346198
 
 lines = s.split('\n')
 line_index = 0
@@ -425,4 +424,4 @@ for seed_range in seed_ranges:
     process_range_through_tree(seed_range, 0)
 
 # Doesn't work.
-print(lowest)
+print(lowest)  # ?

@@ -124,6 +124,8 @@ total = 0
 #             break
 #     if valid:
 #         total = total + game_id
+#
+# print(total)  # 2085
 
 for line in s.split('\n'):
     min_game = {
@@ -148,5 +150,4 @@ for line in s.split('\n'):
     power = min_game["red"] * min_game["blue"] * min_game["green"]
     total = total + power
 
-print(total)
-
+print(total)  # 79315

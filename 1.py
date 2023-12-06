@@ -1029,6 +1029,8 @@ total = 0
 #             break
 #     print(num)
 #     total = total + num
+#
+# print(total)  # 54338
 
 for line in s.split():
     num1 = 0
@@ -1070,4 +1072,4 @@ for line in s.split():
     num = (num1 * 10) + num2
     total = total + num
 
-print(total)
+print(total)  # 53389

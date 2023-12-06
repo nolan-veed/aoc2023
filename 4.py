@@ -233,6 +233,8 @@ Card 212: 20 42 99 64 58 19 11  8 78  2 | 95 54 44 34 45 18 82 21 80 86 79 47  1
 #             i = i * 2
 #
 #     total = total + card_points
+#
+# print(total)  # 25010
 
 card_id = 0
 card_counts = [0, ]
@@ -267,4 +269,4 @@ for line in s.split('\n'):
 
 total = sum(card_counts)
 
-print(total)
+print(total)  # 9924412
