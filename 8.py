@@ -755,6 +755,18 @@ FMJ = (KQM, DHQ)
 # ZZZ = (ZZZ, ZZZ)
 # """
 
+# s = """LR
+#
+# 11A = (11B, XXX)
+# 11B = (XXX, 11Z)
+# 11Z = (11B, XXX)
+# 22A = (22B, XXX)
+# 22B = (22C, 22C)
+# 22C = (22Z, 22Z)
+# 22Z = (22B, 22B)
+# XXX = (XXX, XXX)
+# """
+
 pattern = None
 paths = {}
 for line in s.splitlines():
@@ -774,18 +786,79 @@ for line in s.splitlines():
 
 f = 'AAA'
 
+froms = []
+# tos = []
+z_counts = []
+for i in paths.keys():
+    if i.endswith('A'):
+        froms.append(i)
+        # tos.append('')
+        z_counts.append(0)
+
 count = 0
 done = False
-while not done:
-    for p in pattern:
-        step = paths[f]
-        if p == 'L':
-            f = step[0]
-        else:
-            f = step[1]
-        count = count + 1
-        if f == 'ZZZ':
-            done = True
-            break
+# while not done:
+#     for p in pattern:
+#         step = paths[f]
+#         if p == 'L':
+#             f = step[0]
+#         else:
+#             f = step[1]
+#         count = count + 1
+#         if f == 'ZZZ':
+#             done = True
+#             break
+#
+# print(count)  # 12083
 
-print(count)  # 12083
+# Part 2 brute force doesn't complete.
+#
+# while not done:
+#     for p in pattern:
+#         z_count = 0
+#         for i in range(len(froms)):
+#             f = froms[i]
+#             step = paths[f]
+#             if p == 'L':
+#                 to = step[0]
+#             else:
+#                 to = step[1]
+#             tos[i] = to
+#             if to.endswith('Z'):
+#                 z_count = z_count + 1
+#         count = count + 1
+#         if z_count == len(froms):
+#             done = True
+#             break
+#         froms = list(set(tos))
+
+
+for i in range(len(froms)):
+    f = froms[i]
+    z_count = 0
+    done = False
+    while not done:
+        for p in pattern:
+            step = paths[f]
+            if p == 'L':
+                to = step[0]
+            else:
+                to = step[1]
+            z_count = z_count + 1
+            if to.endswith('Z'):
+                z_counts[i] = z_count
+                done = True
+                break
+            f = to
+
+import math
+
+g = math.gcd(*z_counts)
+count = g
+
+u = set(z_counts)
+if len(u) != 1:
+    lcm = math.lcm(*z_counts)
+    count = lcm
+
+print(count)  # 13385272668829
