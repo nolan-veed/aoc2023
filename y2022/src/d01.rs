@@ -2248,13 +2248,21 @@ pub(crate) fn run() {
 ";
 
 
-    let mut maxi = 0;
+    let mut max0 = 0;
+    let mut max1 = 0;
+    let mut max2 = 0;
     let mut count = 0;
     for l in s.split('\n') {
         if l.is_empty() {
-            if count > maxi
-            {
-                maxi = count;
+            if count > max0 {
+                max2 = max1;
+                max1 = max0;
+                max0 = count;
+            } else if count > max1 {
+                max2 = max1;
+                max1 = count;
+            } else if count > max2 {
+                max2 = count;
             }
             count = 0;
             continue;
@@ -2262,5 +2270,6 @@ pub(crate) fn run() {
         let c: i32 = l.to_string().parse().unwrap();
         count += c;
     }
-    println!("{}", maxi);
+    println!("{}", max0); // 71471
+    println!("{}", max0 + max1 + max2); //211189
 }
