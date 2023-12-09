@@ -2231,7 +2231,7 @@ pub(crate) fn run() {
 2273
 5199
 6924
-6953
+6953211189
 4903
 
 26443
@@ -2271,5 +2271,5 @@ pub(crate) fn run() {
         count += c;
     }
     println!("{}", max0); // 71471
-    println!("{}", max0 + max1 + max2); //211189
+    println!("{}", max0 + max1 + max2); // 211189
 }
