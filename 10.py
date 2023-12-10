@@ -309,7 +309,6 @@ total_0 = 0
 total_1 = 0
 
 for r in maze:
-    r = r[1:-1]
     for c in r:
         if c == '0':
             total_0 = total_0 + 1
