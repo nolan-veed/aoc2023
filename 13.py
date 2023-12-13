@@ -1405,18 +1405,95 @@ def transposed(pattern):
     return t_p
 
 
-total = 0
-for pi, p in enumerate(patterns):
-    mi = find_min_mirror(p)
+# total = 0
+# for pi, p in enumerate(patterns):
+#     mi = find_min_mirror(p)
+#     if mi is None:
+#         t_p = transposed(p)
+#         mi = find_min_mirror(t_p)
+#         if mi is None:
+#             pass
+#         if mi is not None:
+#             mi *= 100
+#     print(mi)
+#     if mi is not None:
+#         total += mi
+# print(total)  # 33975
+
+cache = {}
+
+
+def find_min_in_mirror_cached(pattern, t, original_mi, original_t):
+    for i in range(len(pattern[0]) - 1):
+        i_h_mirror = i
+        for line in pattern:
+            if (line, i) in cache:
+                i_h_mirror = cache[(line, i)]
+            first = line[:i + 1]
+            second = line[i + 1:]
+            if len(first) <= len(second):
+                first = ''.join(reversed(first))
+                if not second.startswith(first):
+                    i_h_mirror = -1
+            else:
+                second = ''.join(reversed(second))
+                if not first.endswith(second):
+                    i_h_mirror = -1
+            cache[(line, i)] = i_h_mirror
+            if i_h_mirror == -1:
+                break
+        if i_h_mirror >= 0:
+            i_h_mirror += 1
+            if t:
+                i_h_mirror *= 100
+            if t != original_t or i_h_mirror != original_mi:
+                return i_h_mirror
+
+
+def solve_part1(pattern):
+    t = False
+    mi = find_min_mirror(pattern)
     if mi is None:
-        t_p = transposed(p)
+        t_p = transposed(pattern)
         mi = find_min_mirror(t_p)
-        if mi is None:
-            pass
         if mi is not None:
             mi *= 100
-    print(mi)
-    if mi is not None:
-        total += mi
+            t = True
+    print('original mi:', mi)
+    return mi, t
 
-print(total)
+
+def solve(pattern):
+    original_mi, original_t = solve_part1(pattern)
+    for smudge_i in range(len(pattern)):
+        for smudge_j in range(len(pattern[0])):
+            line = pattern[smudge_i]
+            c = line[smudge_j]
+            if c == '.':
+                c_replace = '#'
+            else:
+                c_replace = '.'
+            line_replace = line[:smudge_j] + c_replace + line[smudge_j + 1:]
+            pattern[smudge_i] = line_replace
+            mi = find_min_in_mirror_cached(pattern, False, original_mi, original_t)
+
+            if mi is None:
+                t_pattern = transposed(pattern)
+                mi = find_min_in_mirror_cached(t_pattern, True, original_mi, original_t)
+            pattern[smudge_i] = line
+            if mi is not None:
+                return mi
+
+
+def part2():
+    total = 0
+    for pi, p in enumerate(patterns):
+        mi = solve(p)
+        print(mi)
+        if mi is not None:
+            total += mi
+
+    print(total)  # 29083
+
+
+part2()
