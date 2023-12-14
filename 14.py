@@ -1,3 +1,5 @@
+import copy
+
 s = """..#..#..#.#OO.O#...#O..O..O#.###.O...##..OO...#.O#..##......OO.#O.O.#.O..#...#OO..OO..O.O..#.OO...##
 .#.#..#.OO.O...O###OO.O.OO......O.OO#....O#....##O.O..O....##...O...O#..O###O...OO#......O#.#...O..O
 ..O..#OOO##.....O...#O..#.#.O##......O.##.OO..O...O...OO.O.#.##.OOO...OO....#..#...........#.....#..
@@ -113,28 +115,112 @@ O.#..O.#.#
 
 lines = s.splitlines()
 plane = []
+for i in range(len(lines[0])):
+    plane.append([])
 for i, line in enumerate(lines):
     for j, c in enumerate(line):
-        if i == 0:
-            plane.append([])
-        plane[j].append(c)
+        j2 = len(line) - 1 - j
+        plane[j2].append(c)
 
-load = 0
 
-for i, l in enumerate(plane):
-    for j in range(1, len(l)):
-        if plane[i][j] == 'O':
-            for k in range(j, 0, -1):
-                if plane[i][k - 1] == '.':
-                    plane[i][k - 1] = 'O'
-                    plane[i][k] = '.'
-                else:
-                    break
+def tilt():
+    for i, l in enumerate(plane):
+        for j in range(1, len(l)):
+            if l[j] == 'O':
+                for k in range(j, 0, -1):
+                    if l[k - 1] == '.':
+                        l[k - 1] = 'O'
+                        l[k] = '.'
+                    else:
+                        break
 
-for i, l in enumerate(plane):
-    for j in range(len(l)):
-        if plane[i][j] == 'O':
-            v = len(l) - j
-            load += v
 
-print(load)  # 108840
+def get_load():
+    load = 0
+    for i, l in enumerate(plane):
+        for j in range(len(l)):
+            if plane[i][j] == 'O':
+                v = len(l) - j
+                load += v
+    return load
+
+
+# tilt()
+# part1_load = get_load()
+# print(part1_load)  # 108840
+
+rotate_cache = {}
+
+
+def cached_rotate():
+    global plane
+    rotate_s = str(plane)
+    if rotate_s in rotate_cache:
+        plane = copy.copy(rotate_cache[rotate_s])
+        return
+
+    rotated = []
+    for i in range(len(plane[0])):
+        rotated.append([])
+    for i in reversed(range(len(plane))):
+        l = plane[i]
+        for j, c in enumerate(l):
+            rotated[j].append(c)
+    plane = rotated
+    rotate_cache[rotate_s] = copy.copy(plane)
+
+
+cache = {}
+tilt_cache = {}
+
+
+def cached_tilt():
+    global plane
+    tilt_s = str(plane)
+    if tilt_s in tilt_cache:
+        plane = copy.copy(tilt_cache[tilt_s])
+        return False
+    moved = False
+    for i, l in enumerate(plane):
+        l_s = str(l)
+        if l_s in cache:
+            plane[i] = cache[l_s]
+            continue
+        for j in range(1, len(l)):
+            if l[j] == 'O':
+                for k in range(j, 0, -1):
+                    if l[k - 1] == '.':
+                        l[k - 1] = 'O'
+                        l[k] = '.'
+                        moved = True
+                    else:
+                        break
+        plane[i] = l
+        cache[l_s] = l
+    tilt_cache[tilt_s] = copy.copy(plane)
+    return moved
+
+
+def print_load_part2():
+    loads = [0]
+    for i in range(1, 300):
+        cache_missed = False
+        for j in range(4):
+            cache_missed |= cached_tilt()
+            cached_rotate()
+        if cache_missed:
+            print('cache_missed: i=', i)
+        lo = get_load()
+        print('i=', i, 'lo=', lo)
+        loads.append(lo)
+
+    offset = 236
+    loop_len = 59
+    x = 1000000000 - offset
+    y = x % loop_len
+    z = offset + y
+    print('x=', x, 'y=', y, 'z=', z)
+    print(loads[z])  # 103445
+
+
+print_load_part2()
