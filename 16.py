@@ -1,3 +1,5 @@
+import copy
+
 s = r"""\.........|......./...|........................................................|............|-...\...-/.......
 .....................\.......\........./...|...............|...\................................-...|.......\.
 .......................................-....-./............/.......-.............\..|.......|......//.........
@@ -122,7 +124,13 @@ s2 = r""".|...\....
 
 grid = s.splitlines()
 zeroes = [0 for _ in range(len(grid[0]))]
-grid_energized = [zeroes.copy() for _ in range(len(grid))]
+energised_grid = [zeroes.copy() for _ in range(len(grid))]
+
+
+def reset_energised_grid():
+    global energised_grid
+    energised_grid = [zeroes.copy() for _ in range(len(grid))]
+
 
 # right, down, left, up
 dirs = [(0, 1), (1, 0), (0, -1), (-1, 0)]
@@ -159,10 +167,10 @@ def energize(r, c, dir):
     flags = [1, 2, 4, 8]
     flag = flags[dir]
 
-    v = grid_energized[r][c]
+    v = energised_grid[r][c]
     if v & flag > 0:
         return False
-    grid_energized[r][c] = v | flag
+    energised_grid[r][c] = v | flag
     return True
 
 
@@ -216,11 +224,49 @@ def traverse2(start_r, start_c, start_dir):
                 stack.append((new_r, new_c, new_dir))
 
 
-traverse2(0, 0, 0)
+def count_energised():
+    count = 0
+    for r in range(len(energised_grid)):
+        for c in range(len(energised_grid[0])):
+            if energised_grid[r][c] > 0:
+                count += 1
+    return count
 
-count = 0
-for r in range(len(grid_energized)):
-    for c in range(len(grid_energized[0])):
-        if grid_energized[r][c] > 0:
-            count += 1
-print(count)  # 7728
+
+def part1():
+    reset_energised_grid()
+    traverse2(0, 0, 0)
+    count = count_energised()
+    print(count)  # 7728
+
+
+# part1()
+
+def part2_run(r, c, dir):
+    reset_energised_grid()
+    traverse2(r, c, dir)
+    count = count_energised()
+    # print(count)
+    return count
+
+
+def part2():
+    max_count = 0
+    for c in range(len(grid[0])):
+        count = part2_run(0, c, 1)
+        max_count = max(max_count, count)
+        count = part2_run(len(grid) - 1, c, 3)
+        max_count = max(max_count, count)
+
+    print(max_count)
+
+    for r in range(len(grid)):
+        count = part2_run(r, 0, 0)
+        max_count = max(max_count, count)
+        count = part2_run(r, len(grid[0]) - 1, 2)
+        max_count = max(max_count, count)
+
+    print(max_count)
+
+
+part2()
