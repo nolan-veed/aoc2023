@@ -2,16 +2,59 @@ s = '''kzb=5,zzvx-,bdld=7,qprd-,zf=1,cb-,jplf=7,kcgf=6,fpllc=6,jmvh=2,xdz-,zxxf-
 
 s2 = '''rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7'''
 
-sum = 0
+# sum = 0
+# lines = s.split(',')
+# for line in lines:
+#     current_v = 0
+#     for c in line:
+#         v = ord(c)
+#         current_v += v
+#         current_v *= 17
+#         current_v %= 256
+#     # print(current_v)
+#     sum += current_v
+# print(sum)  # 513172
+
+
+labels = [[] for _ in range(256)]
+focals = [[] for _ in range(256)]
+
 lines = s.split(',')
 for line in lines:
     current_v = 0
-    for c in line:
+    for i, c in enumerate(line):
+        if c == '=':
+            label = line[:i]
+            focal = int(line[i + 1])
+            box = current_v
+            try:
+                ind = labels[box].index(label)
+                focals[box][ind] = focal
+            except ValueError:
+                labels[box].append(label)
+                focals[box].append(focal)
+            break
+        elif c == '-':
+            label = line[:i]
+            box = current_v
+            try:
+                ind = labels[box].index(label)
+                labels[box].pop(ind)
+                focals[box].pop(ind)
+            except ValueError:
+                pass
+            break
         v = ord(c)
         current_v += v
         current_v *= 17
         current_v %= 256
-    # print(current_v)
-    sum += current_v
+    print(current_v)
 
-print(sum)
+sum = 0
+
+for i, box in enumerate(focals):
+    for j, f in enumerate(box):
+        v = (i + 1) * (j + 1) * f
+        sum += v
+
+print(sum)  # 237806
